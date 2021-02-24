@@ -1,7 +1,7 @@
 const { exec } = require('../db/mysql')
 
 const getBLogList = async (keyword) => {
-  let sql = `select pic, title, wordsCount, description, readTime, id  from t_blogs where 1=1 `
+  let sql = `select pic, title, wordsCount, description, readTime, id, createTime  from t_blogs where 1=1 `
   if (keyword) {
     sql += `and title like '%${keyword}%' `
   }

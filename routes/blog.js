@@ -15,13 +15,11 @@ router.get('/getBlogList', async (ctx, next) => {
 router.get('/getBlogDetail', async (ctx, next) => {
   let id = ctx.query.id
   const blogData = await getBLogDetail(id)
-  console.log(blogData)
   if (blogData) {
     ctx.body = new SuccessModel(blogData)
   } else {
     ctx.body = new ErrorModel('文章找不到啦')
   }
-  
 })
 
 module.exports = router
