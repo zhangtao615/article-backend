@@ -6,7 +6,7 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require('koa2-cors')
-
+const session = require('koa-generic-session')
 
 const user = require('./routes/user')
 const blog = require('./routes/blog')
@@ -31,6 +31,15 @@ app.use(views(__dirname + '/views', {
   extension: 'pug'
 }))
 
+app.keys = ['WJiol#32467']
+app.use(session({
+  // 配置cookie
+  cookie: {
+    path: '/',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000
+  }
+}))
 // logger
 app.use(async (ctx, next) => {
   const start = new Date()
