@@ -21,5 +21,8 @@ router.get('/getBlogDetail', async (ctx, next) => {
     ctx.body = new ErrorModel('文章找不到啦')
   }
 })
+router.post('/createBlog', async (ctx, next) => {
+  const { title, content, tag, wordCount, createTime, description, pic, readTime } = ctx.request.body
+})
 
 module.exports = router

@@ -29,7 +29,17 @@ const login = async (username, password) => {
    return rows[0] || {}
 }
 
+const checkName = async (username) => {
+  let userName = escape(username)
+  const sql = `
+     select username from t_users where username=${userName};
+   `
+   const rows = await exec(sql)
+   return rows[0] || {}
+}
+
 module.exports = {
   reg,
-  login
+  login,
+  checkName
 }
