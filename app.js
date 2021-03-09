@@ -6,9 +6,9 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require('koa2-cors')
-const session = require('koa-generic-session')
-const redisStore = require('koa-redis')
-const { REDIS_CONFIG } = require('./config/db')
+const session = require('koa-session')
+// const redisStore = require('koa-redis')
+// const { REDIS_CONFIG } = require('./config/db')
 
 const user = require('./routes/user')
 const blog = require('./routes/blog')
@@ -18,7 +18,7 @@ const tag = require('./routes/tag')
 onerror(app)
 // 处理跨域
 app.use(cors({
-  origin: ['http://localhost:3000'],
+  origin: "http://localhost:3000",
   credentials: true
 }));
 // middlewares
@@ -35,18 +35,16 @@ app.use(views(__dirname + '/views', {
 
 // session 配置
 app.keys = ['WJiol#0615']
-app.use(session({
-  // 配置cookie
-  cookie: {
+const SESSION_CONFIG = {
+    key: 'user_id',
     path: '/',
+    domain: 'http://localhost:3000',
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000
-  },
-  // 配置redis
-  store: redisStore({
-    all: `${REDIS_CONFIG.host}:${REDIS_CONFIG.port}`
-  })
-}))
+    maxAge: 24 * 60 * 60 * 1000,
+    overwrite: true,
+    signed: true
+}
+app.use(session(SESSION_CONFIG, app))
 // logger
 app.use(async (ctx, next) => {
   const start = new Date()

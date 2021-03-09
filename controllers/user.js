@@ -1,34 +1,30 @@
 const { exec, escape } = require('../db/mysql')
 const { genPassword } = require('../utils/cryp')
 
+// 注册
 const reg = async (username, password) => {
   // 使用escape后拼接sql语句需要加引号
   let userName = escape(username)
-   
   // 生成加密密码
-  let pwd = genPassword(password)
-  pwd = escape(pwd)
+  let passWord = escape(password)
   const sql = `
-    insert into t_users (username, password, admin) values (${userName}, ${pwd}, 0);
+    insert into t_users (username, password, admin) values (${userName}, ${passWord}, false);
   `
   const rows = await exec(sql)
   return rows[0] || {}
 }
-
+// 登录
 const login = async (username, password) => {
    // 使用escape后拼接sql语句需要加引号
    let userName = escape(username)
-   
-   // 生成加密密码
-   let pwd = genPassword(password)
-   pwd = escape(pwd)
+   let passWord = escape(password)
    const sql = `
-     select username from t_users where username=${userName} and password=${pwd};
+     select username, id from t_users where username=${userName} and password=${passWord};
    `
    const rows = await exec(sql)
    return rows[0] || {}
 }
-
+// 检查用户名是否被注册
 const checkName = async (username) => {
   let userName = escape(username)
   const sql = `
@@ -37,9 +33,16 @@ const checkName = async (username) => {
    const rows = await exec(sql)
    return rows[0] || {}
 }
-
+// 处理评论
+const handleCommit = async (author, content, blogId, avatar) => {
+  let con = escape(content)
+  const sql = `insert into t_comments (author, content, blogId, avatar) values (${author}, ${con}, ${blogId}, ${avatar});`
+  const rows = await exec(sql)
+  return rows[0] || {}
+}
 module.exports = {
   reg,
   login,
-  checkName
+  checkName,
+  handleCommit
 }
