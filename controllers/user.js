@@ -34,11 +34,11 @@ const checkName = async (username) => {
    return rows[0] || {}
 }
 // 处理评论
-const handleCommit = async (author, content, blogId, avatar) => {
+const handleCommit = async (author, content, blogId, createTime) => {
   let con = escape(content)
-  const sql = `insert into t_comments (author, content, blogId, avatar) values (${author}, ${con}, ${blogId}, ${avatar});`
+  const sql = `insert into t_comments (author, content, blogId, createTime) values ('${author}', ${con}, ${blogId}, ${createTime});`
   const rows = await exec(sql)
-  return rows[0] || {}
+  return rows || {}
 }
 module.exports = {
   reg,

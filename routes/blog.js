@@ -1,7 +1,8 @@
 const router = require('koa-router')()
 const {
   getBLogList,
-  getBLogDetail
+  getBLogDetail,
+  createBlog
 } = require('../controllers/blog')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
 
@@ -22,7 +23,13 @@ router.get('/getBlogDetail', async (ctx, next) => {
   }
 })
 router.post('/createBlog', async (ctx, next) => {
-  const { title, content, tag, wordCount, createTime, description, pic, readTime } = ctx.request.body
+  const { title, content, tag, createTime, description, pic } = ctx.request.body
+  const res = await createBlog(title, content, tag, createTime, description, pic)
+  if (res.affectedRows === 1) {
+    ctx.body = new SuccessModel()
+  } else {
+    ctx.body = new ErrorModel('文章创建失败')
+  }
 })
 
 module.exports = router

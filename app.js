@@ -6,9 +6,7 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require('koa2-cors')
-const session = require('koa-session')
-// const redisStore = require('koa-redis')
-// const { REDIS_CONFIG } = require('./config/db')
+const koajwt = require('koa-jwt')
 
 const user = require('./routes/user')
 const blog = require('./routes/blog')
@@ -32,19 +30,33 @@ app.use(require('koa-static')(__dirname + '/public'))
 app.use(views(__dirname + '/views', {
   extension: 'pug'
 }))
+app.use(function(ctx, next){
+  return next().catch((err) => {
+    if (401 == err.status) {
+      ctx.status = 401;
+      ctx.body = 'Protected resource, use Authorization header to get access\n';
+    } else {
+      throw err;
+    }
+  });
+});
+// 不受jwt保护的接口
+const unprotected = [
+  '/api/user/login',
+  '/api/user/reg',
+  '/api/user/checkName',
+  '/api/blog/getBlogList',
+  '/api/blog/getBlogDetail',
+  '/api/blog/createBlog',
+  '/api/tag/getTagList',
+  '/api/tag/createTag'
+];
+app.use(koajwt({
+  secret: '7years_VV'
+}).unless({
+  path: unprotected
+}))
 
-// session 配置
-app.keys = ['WJiol#0615']
-const SESSION_CONFIG = {
-    key: 'user_id',
-    path: '/',
-    domain: 'http://localhost:3000',
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
-    overwrite: true,
-    signed: true
-}
-app.use(session(SESSION_CONFIG, app))
 // logger
 app.use(async (ctx, next) => {
   const start = new Date()
