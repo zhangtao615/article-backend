@@ -12,7 +12,6 @@ const createTag = async (val) => {
     id: insertData.insertId
   }
 }
-
 module.exports = {
   getTagList,
   createTag
